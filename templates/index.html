@@ -1,10 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>{{data['title']}}</title>
-</head>
-<body>
-    <h1>Bank!</h1>
-</body>
-</html>
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>{% block title %} Index {% endblock %}</h1>
+    <h3>{{ utc_dt }}</h3>
+{% endblock %}
