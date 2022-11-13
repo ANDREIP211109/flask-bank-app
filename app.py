@@ -25,8 +25,8 @@ def testdb():
     try:
         db.session.query(text('1')).from_statement(text('SELECT 1')).all()
         return '<h1>It works.</h1>'
-    except Exception as e:
+    except Exception as error:
         # e holds description of the error
-        error_text = "<p>The error:<br>" + str(e) + "</p>"
+        error_text = "<p>The error:<br>" + str(error) + "</p>"
         hed = '<h1>Something is broken.</h1>'
         return hed + error_text
