@@ -1,6 +1,7 @@
 from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.sql import text
+from sqlalchemy import Table, Column, Integer, String, MetaData, select
+meta = MetaData()
 
 app = Flask(__name__)
 
@@ -20,13 +21,26 @@ db.init_app(app)
 def hello():
     return render_template('index.html')
 
+users = Table(
+   'users', meta, 
+   Column('id', Integer, primary_key = True, autoincrement=True), 
+   Column('first_name', String), 
+   Column('last_name', String), 
+   Column('email', String, unique=True), 
+   Column('password', String), 
+)
+
+async def init_models():
+    async with db.begin() as conn:
+        await conn.run_sync(meta.drop_all)
+        await conn.run_sync(meta.create_all)
+
 @app.route('/db/')
 def testdb():
-    try:
-        db.session.query(text('1')).from_statement(text('SELECT 1')).all()
-        return '<h1>It works.</h1>'
-    except Exception as error:
-        # e holds description of the error
-        error_text = "<p>The error:<br>" + str(error) + "</p>"
-        hed = '<h1>Something is broken.</h1>'
-        return hed + error_text
+    stmt = select(users)
+    str=""
+    with db.connect() as conn:
+        for row in conn.execute(stmt):
+            str=str+" "+row
+
+    return str
