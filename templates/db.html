@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %} Db {% endblock %}
+{% block content %}
+<table class="table table-striped table-bordered">
+    <thead>
+        <th scope="col">#</th>
+        <th scope="col">First Name</th>
+        <th scope="col">Last Name</th>
+        <th scope="col">Email</th>
+        <th scope="col">Password</th>
+    </thead>
+    <tbody>
+        {% for row in result: %}
+            <tr>
+                <th scope="row">{{row['id']}}</th>
+                <td>{{row['first_name']}}</td>
+                <td>{{row['last_name']}}</td>
+                <td>{{row['email']}}</td>
+                <td>{{row['password']}}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

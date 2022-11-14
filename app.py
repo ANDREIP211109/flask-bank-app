@@ -1,21 +1,18 @@
 from flask import Flask, render_template
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import Table, Column, Integer, String, MetaData, select
+from sqlalchemy import insert, create_engine, Table, Column, Integer, String, MetaData, select
 meta = MetaData()
 
 app = Flask(__name__)
 
 # change to name of your database; add path if necessary
-db_name = 'bank.db'
+DB_NAME = 'bank.db'
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + db_name
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + DB_NAME
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 
 # this variable, db, will be used for all SQLAlchemy commands
-db = SQLAlchemy(app)
-
-db.init_app(app)
+db=create_engine(app.config['SQLALCHEMY_DATABASE_URI'], echo=True)
 
 @app.route('/')
 def hello():
@@ -30,17 +27,11 @@ users = Table(
    Column('password', String), 
 )
 
-async def init_models():
-    async with db.begin() as conn:
-        await conn.run_sync(meta.drop_all)
-        await conn.run_sync(meta.create_all)
+
+meta.create_all(db)
 
 @app.route('/db/')
 def testdb():
     stmt = select(users)
-    str=""
     with db.connect() as conn:
-        for row in conn.execute(stmt):
-            str=str+" "+row
-
-    return str
+        return render_template('db.html', result=conn.execute(stmt))
